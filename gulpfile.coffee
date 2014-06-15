@@ -25,6 +25,7 @@ minifyJSON = ->
 
 config = _.defaults gutil.env,
     target: switch
+        when gutil.env.cordova or gutil.env.android or gutil.env.ios then 'cordova'
         when gutil.env.chrome then 'chrome'
         when gutil.env.firefox then 'firefox'
         else 'web' # web, chrome, firefox
@@ -111,7 +112,10 @@ else
     config = _.defaults config,
         experimental: yes
 
-config.dest = "dist/#{config.target}/#{config.env}"
+config.dest = if config.target isnt 'cordova'
+        try fs.mkdirSync 'dist'
+        "dist/#{config.target}/#{config.env}"
+    else 'www'
 
 
 try
